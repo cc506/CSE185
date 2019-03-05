@@ -1,22 +1,25 @@
 function [output, match] = template_matching_SSD(img, template, threshold)
 
     output = img;
-    I2 = zeros(size(img));
-    var = floor(template(1)/2);
-
+    var_u = floor(size(template,1)/2);
+    var_v = floor(size(template,2)/2);
+    
+    %zero pad
+    I1 = zeros(size(img,1)+var_u*(2),size(img,2)+var_v*(2));
+    I1(1 + var_u: size(I1, 1)- var_u,1 + var_v: size(I1, 2)- var_v) = img;
+    
     %% your code here
-    for u = 1 + var: size(img, 2)- var
-        for v = 1 + var: size(img, 1)- var
+    for u = 1 + var_u: size(I1, 1)- var_u
+        for v = 1 + var_v: size(I1, 2)- var_v
             
-            x1 = u - var; x2 = u + var;
-            y1 = v - var; y2 = v + var;
-            patch = img(y1:y2, x1:x2);
+            x1 = u - var_u; x2 = u + var_u;
+            y1 = v - var_v; y2 = v + var_v;
+            patch = I1(x1:x2, y1:y2);
 
             % SSD
-            value = (patch - template).^2;
-            value = value(:);
-            value = sum(value);
-            output(v, u) = value;
+            value = patch - template;
+            value = sum(sum(value(:).^2));
+            output(u - var_u, v - var_v) = value;
 
         end
     end

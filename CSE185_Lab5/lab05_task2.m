@@ -18,7 +18,7 @@ imwrite(match, sprintf('%s_ssd_match.jpg', name) );
 
 %% Normalized Cross-Correlation
 
-threshold = 1;
+threshold = 0.5;
 [output, match] = template_matching_normcorr(img, template, threshold);
 
 figure, imshow(output ./ max(output(:))); title('NormCorr output');
