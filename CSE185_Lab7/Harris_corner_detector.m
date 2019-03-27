@@ -16,10 +16,10 @@ function [corner_x, corner_y] = Harris_corner_detector...
     
     
     %% Use derivative of Gaussian to compute x-gradient (Ix) and y-gradient (Iy)
-    Ix = imfilter(I, gaussian_kernel1)
-    Ix = imfilter(Ix, Dx);
-    Iy = imfilter(I, gaussian_kernel1);
-    Iy = imfilter(Iy, Dy);
+    Ix = imfilter(I, Dx);
+    Ix = imfilter(Ix, gaussian_kernel1);
+    Iy = imfilter(I, Dy);
+    Iy = imfilter(Iy, gaussian_kernel1);
 
 %     figure, imshow(Ix + 0.5);
 %     figure, imshow(Iy + 0.5);
@@ -38,7 +38,7 @@ function [corner_x, corner_y] = Harris_corner_detector...
 
     
     %% compute corner response from determine and trace
-    R = ((Sxx .* Syy) - (Sxy .* Sxy)) - alpha.*(Sxx + Syy).^2;
+    R = ((Sxx .* Syy) - (Sxy .* Sxy)) - alpha.*((Sxx + Syy).^2);
 
     %figure, imagesc(R); colormap jet; colorbar; axis image;
 
