@@ -14,12 +14,11 @@ function [corner_x, corner_y] = Harris_corner_detector...
     Dy = [1; 0; -1];
 
     
-    
     %% Use derivative of Gaussian to compute x-gradient (Ix) and y-gradient (Iy)
-    Ix = imfilter(I, Dx);
-    Ix = imfilter(Ix, gaussian_kernel1);
-    Iy = imfilter(I, Dy);
-    Iy = imfilter(Iy, gaussian_kernel1);
+    Ix = imfilter(I, Dx, 'replicate');
+    Ix = imfilter(Ix, gaussian_kernel1, 'replicate');
+    Iy = imfilter(I, Dy, 'replicate');
+    Iy = imfilter(Iy, gaussian_kernel1, 'replicate');
 
 %     figure, imshow(Ix + 0.5);
 %     figure, imshow(Iy + 0.5);
@@ -38,7 +37,7 @@ function [corner_x, corner_y] = Harris_corner_detector...
 
     
     %% compute corner response from determine and trace
-    R = ((Sxx .* Syy) - (Sxy .* Sxy)) - alpha.*((Sxx + Syy).^2);
+    R = ((Sxx .* Syy) - (Sxy .* Sxy)) - alpha*((Sxx + Syy).^2);
 
     %figure, imagesc(R); colormap jet; colorbar; axis image;
 
@@ -51,8 +50,10 @@ function [corner_x, corner_y] = Harris_corner_detector...
     
     %% find local maxima of R
     local_maxima = imregionalmax(R);
+    %local_maxima = ordfilt2(R, 8, ones(hsize2));
+    %local_maxima =  bwmorph(R, 'erode');
     
-    %figure, imshow(local_maxima)
+    figure, imshow(local_maxima)
 
     
     %% final corner map and corner x, y coordinates
