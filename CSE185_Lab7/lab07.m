@@ -1,6 +1,6 @@
 % Use both images to test your program
-%name = 'baboon';
-name = 'checkboard';
+name = 'baboon';
+%name = 'checkboard';
 
 I = im2double(imread(sprintf('%s.png', name)));
 

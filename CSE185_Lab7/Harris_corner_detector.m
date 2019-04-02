@@ -49,11 +49,10 @@ function [corner_x, corner_y] = Harris_corner_detector...
 
     
     %% find local maxima of R
-    local_maxima = imregionalmax(R);
-    %local_maxima = ordfilt2(R, 8, ones(hsize2));
-    %local_maxima =  bwmorph(R, 'erode');
-    
-    figure, imshow(local_maxima)
+    %local_maxima = imregionalmax(R);
+    local_maxima = max_sup(R);
+
+    %figure, imshow(local_maxima)
 
     
     %% final corner map and corner x, y coordinates
