@@ -1,3 +1,4 @@
 *.manifest -crlf -diff -merge
 *.vcproj binary
 *.sln binary
+*.c linguist-language=MATLAB
