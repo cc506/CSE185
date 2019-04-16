@@ -1,8 +1,16 @@
 
-run('vlfeat-0.9.20-bin/toolbox/vl_setup');
+run('vlfeat-0.9.21/toolbox/vl_setup');
 
-img1 = im2single(imread('prtn13.jpg'));
-img2 = im2single(imread('prtn12.jpg'));
+%img1 = im2single(imread('prtn13.jpg'));
+%img2 = im2single(imread('prtn12.jpg'));
+img1 = im2single(imread('denny/denny00.jpg'));
+img2 = im2single(imread('denny/denny01.jpg'));
+%img1 = im2single(imread('denny/denny13.jpg'));
+%img2 = im2single(imread('denny/denny14.jpg'));
+%img1 = im2single(imread('denny/denny09.jpg'));
+%img2 = im2single(imread('denny/denny10.jpg'));
+
+
 
 %% SIFT feature extraction
 I1 = rgb2gray(img1);
@@ -26,29 +34,38 @@ delta = 5;
 
 best_tx = 0;
 best_ty = 0;
+max_inlier = 0;
+
+k = (log(1-p))/(log(1-(1-e)^s));
 
 for i = 1:k 
-    p = randperm(size(matches, 2));
+    n = randi([1 size(matches, 2)]);
 
-    p1 = f1(1:2, matches(1, i));
-    p2 = f2(1:2, matches(2, i));
+    p1 = f1(1:2, matches(1, n));
+    p2 = f2(1:2, matches(2, n));
 
-    tx_0 = p2(1);
-    tx_1 = p1(1);
+    tx_0 = p1(1) - p2(1);
+    ty_0 = p1(2) - p2(2);
     inlier = 0;
 
-    for j = 0:n-1
-        ty_0 = p2(2);
-        tx_1 = p1(2);
+    for j = 1:size(matches,2)
+        if j ~=n
+            p1 = f1(1:2, matches(1, j));
+            p2 = f2(1:2, matches(2, j));
 
-        if ((tx_1-tx_0)^2 + (ty_1-ty_0)^2 < delta)
-            inlier = inlier + 1;
-        end
+            tx_1 = p1(1) - p2(1);
+            ty_1 = p1(2) - p2(2);
+
+            if ((tx_1-tx_0)^2 + (ty_1-ty_0)^2 < delta)
+                inlier = inlier + 1;
+            end
+        end 
     end
 
-    if(inlier > max_inliner)
-        best_tx = tx;
-        best_ty = ty;
+    if(inlier > max_inlier)
+        best_tx = tx_0;
+        best_ty = ty_0;
+        max_inlier = inlier;
     end
     
 end
@@ -77,7 +94,7 @@ for y2 = 1:size(img2, 1)
 end
 
 figure, imshow(output);
-imwrite(output, 'result.png');
+imwrite(output, 'result1.png');
 
 
 
