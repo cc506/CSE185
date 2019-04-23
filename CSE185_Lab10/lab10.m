@@ -1,5 +1,5 @@
 %% Load input images
-img_dir = 'data/Army';
+img_dir = 'data/Evergreen';
 img1 = im2double(imread(fullfile(img_dir, 'frame10.png')));
 img2 = im2double(imread(fullfile(img_dir, 'frame11.png')));
 
@@ -32,16 +32,26 @@ for t = 1:k
         for j = 1 + shift : size(Ix_m, 2) - shift
 
             %% extract Ix, Iy, It from local window
-            
+            Ix = Ix_m(i-w : i+w, j-w : j+w);
+            Iy = Iy_m(i-w : i+w, j-w : j+w);
+
+            i2 = floor(i + v(i, j));
+            j2 = floor(j + u(i, j));
+
+            It = I1(i -w : i + w, j -w : j + w) - I2(i2-w : i2+w, j2-w : j2+w);
             
             %% convert Ix, Iy, It to vectors
-
+            Ix = Ix(:);
+            Iy = Iy(:);
+            It = It(:);
             
             %% construct matrix A and vector b
-            
+            A = [Ix, Iy];
+            b = -It;
+            x = A \ b;
             
             %% solve A x = b
-            x = [0, 0]; % remove this line
+            %x = [0, 0]; % remove this line
             
             u_next(i, j) = x(1);
             v_next(i, j) = x(2);
@@ -57,4 +67,4 @@ end
 
 plot_flow(img2, u, v);
 h = gcf;
-saveas(h, 'result.png');
+saveas(h, 'result1.png');
