@@ -1,6 +1,6 @@
 load('att_face.mat');
 
-k = 10; % number of eigenfaces
+k = 50; % number of eigenfaces
 
 h = size(face_training, 1);
 w = size(face_training, 2);
@@ -9,22 +9,22 @@ n_test = size(face_testing, 3);
 
 fprintf('Compute eigenface...\n');
 %% reshape face_training from h x w x num_train to (h*w) x num_train
-X = ?
+X = reshape(face_training, (h*w), n_train);
 
 %% compute mean face
-x_bar = ?
+x_bar = mean(X, 2);
 
 %% substract mean from X
-Y = ?
+Y = X - repmat(x_bar, 1, n_train);
 
 %% compute covariance matrix C
-C = ?
+C = Y * Y';
 
 %% singular value decomposition
-
+[U, S, D] = svd(C);
 
 %% select the first k column from U
-U = ?
+U = U(:, 1 : k);
 
 %% encode face image as coefficients of eigenface
 fprintf('Face reconstruction...\n');
@@ -34,10 +34,13 @@ subplot(1, 2, 1); imshow(imresize(x, 4)); title('input');
 
 % TODO: compute coef
 x = x(:);
-coef = ?
+x = x - x_bar;
+coef = (x' * U)';
+
 
 %% reconstruct face image from coefficients
-x_rec = ?
+
+x_rec = x_bar + U(:, 1:k) * coef;
 
 x_rec = reshape(x_rec, h, w);
 subplot(1, 2, 2); imshow(imresize(x_rec, 4)); title('reconstruction');
@@ -46,7 +49,7 @@ imwrite(imresize(x_rec, 4), sprintf('reconstruct_k%d.jpg', k));
 
 %% encode all training data
 fprintf('Convert training data to coef...\n');
-coef_train = zeros(k, n_train); % TODO: compute coef_train for all training images
+coef_train = U' *Y; % TODO: compute coef_train for all training images
 
 
 %% Face recognition with eigenface coefficients
@@ -59,7 +62,7 @@ for i = 1:n_test
     img_test = face_testing(:, :, i);
     
     %% convert testing image to feature vector
-    coef_test = ?; % TODO: replace this line
+    coef_test = U'*(img_test(:) - x_bar); % TODO: replace this line
     
     error = zeros(n_train, 1);
     for j = 1:n_train
@@ -85,15 +88,15 @@ fprintf('Accuracy = %f\n', accuracy);
 %---------------------------------------%
 %   k   |  Accuracy
 %---------------------------------------%
-%  10   |   
+%  10   |   0.675
 %---------------------------------------%
-%  20   |   
+%  20   |   0.6875
 %---------------------------------------%
-%  30   |   
+%  30   |   0.71875
 %---------------------------------------%
-%  40   |   
+%  40   |   0.7375
 %---------------------------------------%
-%  50   |   
+%  50   |   0.7375
 %---------------------------------------%
 
 
